@@ -10,7 +10,7 @@
                 <p class="text-gray-500 text-lg">{{ $products->count() }} producten</p>
 
                 <div class="grid gap-4 mt-4">
-                    @foreach($products as $product)
+                    @foreach ($products as $product)
                         @include('cart.includes.cart-item', ['product' => $product])
                     @endforeach
                 </div>
@@ -49,9 +49,12 @@
                     </tfoot>
                 </table>
 
-                <a href="{{ route('checkout') }}" class="mt-4 block hover:bg-orange-600 bg-orange-500 uppercase text-center font-semibold text-lg cursor-pointer text-white px-4 py-2 w-full">
-                    Bestelling plaatsen
-                </a>
+                @if (Auth::user()->cart()->count() > 0)
+                    <a href="{{ route('checkout') }}"
+                        class="mt-4 block hover:bg-orange-600 bg-orange-500 uppercase text-center font-semibold text-lg cursor-pointer text-white px-4 py-2 w-full">
+                        Bestelling plaatsen
+                    </a>
+                @endif
             </div>
         </div>
     </div>

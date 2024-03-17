@@ -16,11 +16,18 @@
         <div class="flex gap-4 text-xl items-center">
 
             <a href="{{ route('profile') }}"><i class="fa-solid fa-user"></i></a>
-            <a href="{{ route('favorites') }}"><i class="fa-solid fa-heart"></i></a>
-            <a href="{{ route('cart') }}" class="bg-gray-200 px-4 py-1 rounded-full">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>3 items</span>
-            </a>
+            @auth
+                <a href="{{ route('favorites') }}"><i class="fa-solid fa-heart"></i></a>
+                {{-- @if (Auth::user()->cart()->count() > 0) --}}
+                <a href="{{ Auth::user()->cart()->count() > 0 ? route('cart') : route('products.index') }}"
+                    class="bg-gray-200 px-4 py-1 rounded-full">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>{{ Auth::user()->cart()->count() }} items</span>
+                </a>
+                {{-- @endif --}}
+
+
+            @endauth
         </div>
 
     </div>
