@@ -3,6 +3,16 @@
 @section('title', 'My favorites')
 
 @section('content')
+
+    <div>
+        @if (session('success'))
+            <div class="flex justify-center">
+                <div class="bg-green-200 border-l-4 border-green-500 text-green-700 px-4 py-2 mt-4 rounded shadow-md">
+                    {{ session('success') }}
+                </div>
+            </div>
+        @endif
+    </div>
     <div class="grid grid-cols-6 gap-24">
         <div class="col-span-2">
             <h1 class="text-4xl font-semibold mb-4">Aanmelden</h1>

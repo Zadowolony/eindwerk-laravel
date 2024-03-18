@@ -4,10 +4,14 @@
     <p class="text-gray-500 text-lg">Vul een kortingscode in om te genieten van extra voordelen</p>
     <form action="{{ route('discount.set') }}" method="post" class="mt-2 flex gap-4">
         @csrf
-        <input placeholder="Code" name="code" class="uppercase bg-white appearance-none px-4 py-2 border border-gray-500">
+        <input placeholder="Code" name="code"
+            class="uppercase bg-white appearance-none px-4 py-2 border border-gray-500  @if (session()->has('discount_code')) disabled @endif">
+
         <button type="submit" class="text-xl">
             <i class="fa-solid fa-circle-check"></i>
         </button>
     </form>
-    <p class="text-red-500">Dit is een foutmelding.</p>
+    @error('code')
+        <p class="text-red-500"> {{ $message }}</p>
+    @enderror
 </div>

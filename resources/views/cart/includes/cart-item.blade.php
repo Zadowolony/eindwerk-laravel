@@ -13,6 +13,7 @@
         <div class="mt-2">
             <form action="{{ route('cart.delete', $product) }}" method="post" class="hover:underline text-gray-400">
                 @method('delete') @csrf
+                <input type="hidden" name="pivot[size]" value="{{ $product->pivot->size }}">
                 <button class="appearance-none group">
                     <span class="group-hover:underline">
                         <i class="fa-solid fa-trash"></i> Verwijderen

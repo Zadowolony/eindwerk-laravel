@@ -31,16 +31,19 @@
                         <td class="py-4 text-right">&euro; {{ $shipping }}</td>
                     </tr>
                     {{-- Als kortingscode toon je het stukje hieronder; met de juiste gegevens --}}
-                    {{-- <tr>
-                        <td class="py-4">
-                            Kortingscode:
-                            <span class="block text-gray-500">
-                                KORTING20 (-20%)
-                                <a href="{{ route('discount.remove') }}" class=""><i class="fa-solid fa-circle-minus"></i></a>
-                            </span>
-                        </td>
-                        <td class="py-4 text-right">- &euro;5</td>
-                    </tr> --}}
+                    @if (session()->has('discount_code'))
+                        <tr>
+                            <td class="py-4">
+                                Kortingscode:
+                                <span class="block text-gray-500">
+                                    {{ session('discount_code') }} ({{ $discountAmount }}%)
+                                    <a href="{{ route('discount.remove') }}" class=""><i
+                                            class="fa-solid fa-circle-minus"></i></a>
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">- &euro;{{ $discountAmount }}</td>
+                        </tr>
+                    @endif
                     <tfoot class="border-t border-gray-200">
                         <tr>
                             <td class="py-4 font-semibold">Totaalprijs (inclusief BTW)</td>
