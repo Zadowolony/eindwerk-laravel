@@ -42,9 +42,9 @@ class ShoppingCartController extends Controller
 
         // BONUS: Als de kortingscode bestaat in de sessie, zoek deze op in de databank en pas de korting toe op de berekening.
 
-        if(session()->has('discount_code')){
+        if(session()->has('discount_codes')){
 
-            $discountCode = DiscountCode::where('code', session('discount_code'))->first();
+            $discountCode = DiscountCode::where('code', session('discount_codes'))->first();
 
             if($discountCode){
                 $discountAmount = ($subtotal * $discountCode->percentage) / 100;
