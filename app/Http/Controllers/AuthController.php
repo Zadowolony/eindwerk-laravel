@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -64,7 +65,15 @@ class AuthController extends Controller
         $user->save();
         // BONUS: Verstuur een email naar de gebruiker waarin staat dat er een nieuwe account geregistreerd is voor de gebruiker.
 
+        event(new Registered($user));
+        $user->sendEmailVerificationNotification();
+
+
+
+        $request->session()->flash('success', 'Registration successful! A verification link has been sent to your email.');
         return redirect()->route('login');
+
+       // return redirect()->route('auth.verify-email');
     }
 
     public function logout() {
