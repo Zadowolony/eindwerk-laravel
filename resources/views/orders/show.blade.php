@@ -15,12 +15,15 @@
         <p class="text-gray-500 text-lg">{{ $products->count() }} producten</p>
 
         {{-- Indien kortingscode gekoppeld aan het order --}}
-        {{-- <p class="my-8">
-            <span class="font-semibold">Kortingscode:</span>
-            <span class="inline-block ml-2 bg-green-500 text-green-100 rounded-full px-3 py-2 font-semibold">
-                DISCOUNT20 (-20%)
-            </span>
-        </p> --}}
+
+        @if ($discountCode)
+            <p class="my-8">
+                <span class="font-semibold">Kortingscode:</span>
+                <span class="inline-block ml-2 bg-green-500 text-green-100 rounded-full px-3 py-2 font-semibold">
+                    {{ $discountCode->code }} ({{ $discountCode->discount }})
+                </span>
+            </p>
+        @endif
 
         <div class="grid grid-cols-2 gap-4 mt-4">
             @foreach ($products as $product)

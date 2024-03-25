@@ -19,8 +19,6 @@ class ShoppingCartController extends Controller
         // Check if the user is authenticated
         $user = Auth::user();
 
-
-
         // Zoek de producten van de ingelogde gebruiker op.
         // $products = Product::take(4)->get();
         $products = $user->cart;
@@ -30,40 +28,49 @@ class ShoppingCartController extends Controller
         // Gebruik de "products" relatie op het user model (en gegevens de pivot table) om de producten te overlopen
         // en de volledige prijs van de winkelkar te berekenen.
         $subtotal = 0;
+        $discountAmount =0;
 
-        foreach($products as $product){
+        foreach($products as $product) {
             $subtotal += $product->price * $product->pivot->quantity;
-        }
 
-
-
-        // Bereken de verzendkosten van 3.9eur bij het totaal
-        $total = $subtotal + $shipping;
-
-        // BONUS: Als de kortingscode bestaat in de sessie, zoek deze op in de databank en pas de korting toe op de berekening.
-
-        if(session()->has('discount_codes')){
-
-            $discountCode = DiscountCode::where('code', session('discount_codes'))->first();
-
-            if($discountCode){
-                $discountAmount = ($subtotal * $discountCode->percentage) / 100;
-                $total -= $discountAmount;
+            // Check if discount code exists and apply discount to subtotal
+            $discountCode = DiscountCode::where('code', session('discount_code'))->first();
+            if ($discountCode) {
+                $discountAmount += ($product->price * $product->pivot->quantity) * ($discountCode->discount / 100);
             }
         }
+        // Bereken de verzendkosten van 3.9eur bij het totaal
+       $total = $subtotal + $shipping - $discountAmount;
+
+
+        // BONUS: Als de kortingscode bestaat in de sessie, zoek deze op in de databank en pas de korting toe op de berekening.
+         $discountCode = null;
+
+        $discountCode = DiscountCode::where('code', session('discount_code'))->first();
+
+            // if($discountCode){
+            //     // $discountAmount = ($subtotal * $discountCode->percentage) / 100;
+            //     // $total -= $discountAmount;
+            //     $discountAmount = $discountCode->discount;
+            //     $total -= $discountAmount;
+
+            // }
+
+
         // De kortingscode kan je dan ook naar de view hieronder doorsturen.
         // In de index view hieronder kan je dan ook het stukje in commentaar code tonen met de juiste gegegevens.
         // Indien er al een code ingevuld is zet je de input in de discount-code view file op "disabled"
-        $discountAmount = DiscountCode::where('code', 'discount')->first();
-        $discountCode = false;
+
+
+        // $discountCode = false;
 
         return view('cart.index', [
             'products' => $products,
             'shipping' => $shipping,
             'subtotal' => $subtotal,
             'total' => $total,
-            'discountCode' => isset($discountCode) ? $discountCode : null,
-            'discountAmount' => isset($discountAmount) ? $discountAmount : 0
+            'discountAmount' => $discountAmount,
+            'discountCode' => $discountCode
         ]);
     }
 
@@ -130,23 +137,41 @@ class ShoppingCartController extends Controller
      * BONUS: DISCOUNTS
      */
 
+
+     // DIT WERKT
     public function setDiscountCode(Request $request) {
         // Valideer het formulier (veld is verplicht) en vul het terug in bij foutmeldingen
         $request->validate([
             'code' => 'required'
         ]);
 
-        //$request->session()->put('discount_codes', ['DISCOUNT20', 'HAPPY10', 'JUSTDOIT']);
         $discountCode = DiscountCode::where('code', strtoupper($request->code))->first();
 
         // Als de discount code gevonden is, sla deze op in de sessie
         if ($discountCode) {
-            $request->session()->put('discount_code', $discountCode->code);
-            return redirect()->route('cart')->with('success', 'Discount code successfully applied.');
-        } else {
-            // Als de discount code niet gevonden werd: ga terug met een foutmelding dat de code niet gevonden kon worden
-            return redirect()->back()->with('error', 'Invalid discount code. Please try again.');
+
+            $user = Auth::user();
+
+            // HULP VAN CHATGPT -> opweg met de migratie tabel dicoundt_code <--> user_tabel
+
+         // Check if the user has already used the discount code
+        if ($user->discountCodes()->where('discount_code_id', $discountCode->id)->exists()) {
+            return redirect()->route('cart')->with('error', 'This discount code has already been used.');
         }
+
+        // Associate the discount code with the user
+        $user->discountCodes()->attach($discountCode);
+
+        // Save the discount code to the session
+        $request->session()->put('discount_code', $discountCode->code);
+
+
+
+        return redirect()->route('cart')->with('success', 'Discount code successfully applied.');
+    } else {
+        return redirect()->back()->with('error', 'Invalid discount code. Please try again.');
+    }
+
 
         // BONUS
         // Zoek de discount code in de databank op die het CODE veld uit de request
@@ -157,13 +182,20 @@ class ShoppingCartController extends Controller
             // https://laravel.com/docs/9.x/session#storing-data
         return redirect()->route('cart');
 
+
+
         // Als de discount code niet gevonden werd: ga terug met een foutmelding dat de code niet gevonden kon worden
 
     }
 
+
     public function removeDiscountCode() {
         // Verwijder de discount code uit de sessie
 
-        return back();
+        session()->forget('discount_code');
+
+
+    // Redirect back to the previous page
+    return back();
     }
 }

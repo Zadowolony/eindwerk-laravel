@@ -14,7 +14,13 @@
         <div class="text-right border-t border-gray-500 pt-2 mt-4 flex justify-between">
             <span class="font-normal text-gray-500">{{ $product->pivot->quantity }} &times
                 &euro;{{ $product->price }}</span>
-            <span class="font-semibold">&euro;{{ $product->price * $product->pivot->quantity }}</span>
+            @if ($discountCode)
+                <span class="font-semibold">&euro;{{ number_format($product->total_price_with_discount, 2) }}</span>
+            @else
+                <span
+                    class="font-semibold">&euro;{{ number_format($product->price * $product->pivot->quantity, 2) }}</span>
+            @endif
+
         </div>
     </div>
 </div>

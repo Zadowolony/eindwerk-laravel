@@ -11,9 +11,11 @@
                 <p class="text-gray-700 text-center mb-6">Thank you for registering! To complete your registration, please
                     verify your email address </p>
                 {{-- <div class="flex justify-center">
-                    <a href="{{ route('verification.notice') }}"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Verify
-                        Email Address</a>
+                    <form method="POST" action="{{ route('verification.send') }}">
+                        @csrf
+                        <button type="submit"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Resend</button>
+                    </form>
                 </div> --}}
                 <p class="text-center text-gray-700 mt-4">If you did not create an account, no further action is required.
                 </p>

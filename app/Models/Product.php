@@ -24,13 +24,13 @@ class Product extends Model
     }
 
     public function cart() {
-        return $this->belongsToMany(User::class, 'shopping_cart')->withPivot('quantity', 'size');
+        return $this->belongsToMany(User::class, 'shopping_cart')->withPivot('quantity', 'size')->withTimestamps();
         //Hierdoor kunnen wij nu dit opvragen : $user->cart
         // $product->pivot->quantity en $product->pivot->size
     }
 
     public function order(){
-        return $this->belongsToMany(Order::class);
+        return $this->belongsToMany(Order::class)->withTimestamps();
     }
 
 }

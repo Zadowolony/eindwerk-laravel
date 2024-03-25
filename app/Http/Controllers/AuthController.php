@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email:rfc,filter,dns',
+            'email' => 'required|email:rfc,filter,dns|unique:users,email',
             'password' => 'required|confirmed',
             'password_confirmation' => 'required'
         ]);

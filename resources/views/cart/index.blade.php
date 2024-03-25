@@ -19,6 +19,17 @@
         </div>
         <div class="col-span-2 grid gap-4 content-start">
             @include('cart.includes.discount-code')
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="bg-white p-4">
                 <h1 class="text-2xl font-semibold">Totaal prijs</h1>
                 <table class="w-full">
@@ -36,7 +47,7 @@
                             <td class="py-4">
                                 Kortingscode:
                                 <span class="block text-gray-500">
-                                    {{ session('discount_code') }} ({{ $discountAmount }}%)
+                                    {{ $discountCode->code }} ({{ $discountCode->discount }}%)
                                     <a href="{{ route('discount.remove') }}" class=""><i
                                             class="fa-solid fa-circle-minus"></i></a>
                                 </span>
@@ -48,6 +59,23 @@
                         <tr>
                             <td class="py-4 font-semibold">Totaalprijs (inclusief BTW)</td>
                             <td class="py-4 font-semibold text-right">&euro; {{ $total }}</td>
+                            @if ($discountCode)
+                                @foreach ($products as $product)
+                        <tr>
+                            <td class="py-4">Product: {{ $product->name }}</td>
+                            <td class="py-4 text-right">&euro;{{ number_format($product->total_price_with_discount, 2) }}
+                            </td>
+                        </tr>
+                        @endforeach
+                    @else
+                        @foreach ($products as $product)
+                            <tr>
+                                <td class="py-4">Product: {{ $product->name }}</td>
+                                <td class="py-4 text-right">
+                                    &euro;{{ number_format($product->price * $product->pivot->quantity, 2) }}</td>
+                            </tr>
+                        @endforeach
+                        @endif
                         </tr>
                     </tfoot>
                 </table>

@@ -14,9 +14,16 @@
         </div>
 
         <div class="flex gap-4 text-xl items-center">
+            @auth
+                <div class="flex">
+                    <h2>Welcome :</h2>
+                    <p class="uppercase text-xl italic"> {{ Auth::user()->name }}</p>
+                </div>
+            @endauth
 
             <a href="{{ route('profile') }}"><i class="fa-solid fa-user"></i></a>
             @auth
+
                 <a href="{{ route('favorites') }}"><i class="fa-solid fa-heart"></i></a>
                 {{-- @if (Auth::user()->cart()->count() > 0) --}}
                 <a href="{{ Auth::user()->cart()->count() > 0 ? route('cart') : route('products.index') }}"
